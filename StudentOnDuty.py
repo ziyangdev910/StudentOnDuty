@@ -5,8 +5,8 @@ from PyQt6.QtWidgets import (QApplication, QMainWindow, QWidget, QSystemTrayIcon
                             QMenu, QTextEdit, QVBoxLayout, QHBoxLayout, QPushButton, 
                             QLabel, QSpinBox, QDoubleSpinBox, QComboBox, QCheckBox,
                             QGroupBox, QDialog, QFontComboBox)
-from PyQt6.QtCore import Qt, QPoint
-from PyQt6.QtGui import QFont, QIcon, QScreen
+from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QFont, QIcon
 import datetime
 import json
 
@@ -519,20 +519,39 @@ class SettingsDialog(QDialog):
                 self.daily_combo.setCurrentText(self.main_window.settings["current_daily"])
 
     def set_autostart(self, enable):
-        key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, 
-                            r"Software\Microsoft\Windows\CurrentVersion\Run", 
-                            0, winreg.KEY_ALL_ACCESS)
         try:
-            if enable:
-                app_path = os.path.abspath(sys.argv[0])
-                winreg.SetValueEx(key, "StudentOnDuty", 0, winreg.REG_SZ, app_path)
-            else:
-                try:
-                    winreg.DeleteValue(key, "StudentOnDuty")
-                except FileNotFoundError:
-                    pass
-        finally:
-            winreg.CloseKey(key)
+            # 获取程序路径
+            app_path = os.path.abspath(sys.argv[0])
+            if not os.path.exists(app_path):
+                raise FileNotFoundError(f"程序路径不存在: {app_path}")
+                
+            # 打开注册表项
+            key = winreg.OpenKey(winreg.HKEY_CURRENT_USER,
+                               r"Software\Microsoft\Windows\CurrentVersion\Run",
+                               0, winreg.KEY_ALL_ACCESS)
+            try:
+                if enable:
+                    # 获取批处理文件路径
+                    bat_path = os.path.join(os.path.dirname(app_path), "startup.bat")
+                    if not os.path.exists(bat_path):
+                        raise FileNotFoundError(f"批处理文件不存在: {bat_path}")
+                        
+                    # 设置开机启动指向批处理文件
+                    winreg.SetValueEx(key, "StudentOnDuty", 0, winreg.REG_SZ, f'"{bat_path}"')
+                else:
+                    # 删除开机启动项
+                    try:
+                        winreg.DeleteValue(key, "StudentOnDuty")
+                    except FileNotFoundError:
+                        pass  # 如果不存在则忽略
+            finally:
+                winreg.CloseKey(key)
+                
+        except Exception as e:
+            print(f"设置开机启动失败: {str(e)}")
+            # 回滚设置
+            self.autostart_check.setChecked(not enable)
+            self.main_window.settings["autostart"] = not enable
 
     def save_settings(self):
         # 保存学生名单
@@ -597,6 +616,9 @@ class SettingsDialog(QDialog):
         
         # 保存所有设置到文件
         self.main_window.save_settings()
+
+        # 设置开机自动启动
+        self.set_autostart(self.main_window.settings["autostart"])
         
         # 刷新设置页面的内容
         self.update_combo_boxes()
