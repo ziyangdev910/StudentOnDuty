@@ -13,7 +13,7 @@ import json
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowFlags(Qt.WindowType.FramelessWindowHint | Qt.WindowType.Tool)
+        self.setWindowFlags(Qt.WindowType.FramelessWindowHint | Qt.WindowType.Tool | Qt.WindowType.WindowStaysOnTopHint)
         self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
         
         # 加载设置
@@ -36,8 +36,9 @@ class MainWindow(QMainWindow):
         self.drag_position = None
         self.update_click_through(self.settings.get("click_through", False))
         
-        # 恢复窗口位置
+        # 恢复窗口位置和大小
         self.restore_window_position()
+        self.update_window_geometry()
         
         # 更新值日值周生显示
         self.update_duty_students()
@@ -68,7 +69,7 @@ class MainWindow(QMainWindow):
     def setup_tray(self):
         """初始化系统托盘"""
         self.tray_icon = QSystemTrayIcon(self)
-        self.tray_icon.setIcon(QIcon(r"E:\编程文件\Python\作品\StudentOnDuty\StudentOnDuty\Desktop.ico"))
+        self.tray_icon.setIcon(QIcon(r"Desktop.ico"))
         self.create_tray_menu()  # 创建托盘菜单
         self.tray_icon.show()
 
@@ -396,7 +397,7 @@ class SettingsDialog(QDialog):
         self.main_window = main_window
         
         # 设置窗口图标
-        self.setWindowIcon(QIcon(r"E:\编程文件\Python\作品\StudentOnDuty\StudentOnDuty\Desktop.ico"))
+        self.setWindowIcon(QIcon(r"Desktop.ico"))
         
         self.init_ui()
 
