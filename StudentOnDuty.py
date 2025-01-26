@@ -13,7 +13,7 @@ import json
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowFlags(Qt.WindowType.FramelessWindowHint | Qt.WindowType.Tool | Qt.WindowType.WindowStaysOnTopHint)
+        self.setWindowFlags(Qt.WindowType.FramelessWindowHint | Qt.WindowType.Tool)
         self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
         
         # 加载设置
@@ -42,6 +42,9 @@ class MainWindow(QMainWindow):
         
         # 更新值日值周生显示
         self.update_duty_students()
+        
+        # 更新窗口标志
+        self.update_window_flags()
 
     def setup_ui(self):
         """初始化UI组件"""
@@ -70,6 +73,7 @@ class MainWindow(QMainWindow):
         """初始化系统托盘"""
         self.tray_icon = QSystemTrayIcon(self)
         self.tray_icon.setIcon(QIcon(r"Desktop.ico"))
+        self.tray_icon.setToolTip("StudentOnDuty_V1.0.1")
         self.create_tray_menu()  # 创建托盘菜单
         self.tray_icon.show()
 
