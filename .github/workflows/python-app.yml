@@ -64,9 +64,9 @@ jobs:
 
     - name: rename
       run: |
-        ls -la
+        dir
         cd StudentOnDuty
-        ls -la
+        dir
 
     #    mv StudentOnDuty StudentOnDuty.exe
         
