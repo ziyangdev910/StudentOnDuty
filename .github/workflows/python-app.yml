@@ -10,7 +10,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  release:
+  build:
 
     runs-on: ubuntu-latest
 
@@ -36,13 +36,13 @@ jobs:
         spec: 'StudentOnDuty.spec'
         requirements: 'requirements.txt'
         upload_exe_with_name: 'StudentOnDuty.exe'
-  
-    - name: Download the artifact
-      uses: actions/download-artifact@v4
-      with:
-        name: StudentOnDuty.exe
-        path: ./
+    
+  release:
+    needs: build
 
+    runs-on: ubuntu-latest
+    
+    steps:
     - name: Delete release
       uses: cb80/delrel@latest
       with:
@@ -59,6 +59,12 @@ jobs:
         release_name: Newest Push            
         draft: false
         prerelease: true
+    
+    - name: Download the artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: StudentOnDuty.exe
+        path: ./
 
     - name: Upload release
       uses: actions/upload-release-asset@v1
