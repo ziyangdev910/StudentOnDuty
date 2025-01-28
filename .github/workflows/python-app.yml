@@ -72,6 +72,8 @@ jobs:
         ls -la
         cd build
         ls -la 
+        cd StudentOnDuty
+        ls -la
     #    mv StudentOnDuty StudentOnDuty.exe
         
 
