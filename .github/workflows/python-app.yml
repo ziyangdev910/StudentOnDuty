@@ -33,8 +33,8 @@ jobs:
       uses: Nackophilz/pyinstaller-action@V1.0.1
       with:
         python_ver: '3.10'
-        spec: './StudentOnDuty.spec'
-        requirements: './requirements.txt'
+        spec: 'StudentOnDuty.spec'
+        requirements: 'requirements.txt'
         upload_exe_with_name: 'StudentOnDuty.exe'
     
     - name: Delete release
