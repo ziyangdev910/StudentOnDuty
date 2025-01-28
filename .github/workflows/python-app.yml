@@ -72,6 +72,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./dist/
+        asset_path: ${{  steps.pyinstaller.outputs.executable_path }}
         asset_name: StudentOnDuty.exe
         asset_content_type: application/vnd.microsoft.portable-executable
