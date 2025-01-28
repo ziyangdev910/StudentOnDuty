@@ -58,7 +58,7 @@ jobs:
       uses: actions/download-artifact@v1
       with:
         name: StudentOnDuty.exe
-        path: StudentOnDuty.exe
+        path: ./
 
     - name: Upload release
       uses: actions/upload-release-asset@v1
