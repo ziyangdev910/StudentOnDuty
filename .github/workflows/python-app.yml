@@ -67,11 +67,11 @@ jobs:
         name: StudentOnDuty.exe
         path: ./
 
-    #- name: rename
-    #  run: |
-    #    ls -la
-    #    cd StudentOnDuty
-    #    ls -la 
+    - name: rename
+      run: |
+        ls -la
+        cd StudentOnDuty
+        ls -la 
     #    mv StudentOnDuty StudentOnDuty.exe
 
     - name: Upload release
