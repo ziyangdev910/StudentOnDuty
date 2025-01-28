@@ -37,8 +37,8 @@ jobs:
         spec: 'StudentOnDuty.spec'
         requirements: 'requirements.txt'
         exe_path: './'
-        upload_exe_with_name: 'StudentOnDuty.zip'
-        options: '--onefile'
+      #  upload_exe_with_name: 'StudentOnDuty.zip'
+        
 
     - name: Delete release
       uses: cb80/delrel@latest
@@ -63,11 +63,15 @@ jobs:
     #    name: StudentOnDuty.exe
     #    path: ./
 
-    - name: rename
+    - name: Zip the artifact
       run: |
+        Copy-Item -Path "Desktop.ico" -Destination "./StudentOnDuty/Desktop.ico"
         dir
         cd StudentOnDuty
         dir
+        cd ..
+        Compress-Archive ./StudentOnDuty/ .\* ./ StudentOnDuty.zip
+
 
     #    mv StudentOnDuty StudentOnDuty.exe
         
@@ -79,6 +83,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./StudentOnDuty/StudentOnDuty.exe
-        asset_name: StudentOnDuty.exe
-        asset_content_type: application/vnd.microsoft.portable-executable
+        asset_path: ./StudentOnDuty.zip
+        asset_name: StudentOnDuty.zip
+        asset_content_type: application/zip
