@@ -55,11 +55,11 @@ jobs:
         prerelease: true
     
     - name: Upload release
-    uses: actions/upload-release-asset@v1
-    id: upload-release-asset
-    env:
+      uses: actions/upload-release-asset@v1
+      id: upload-release-asset
+      env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    with:
+      with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: ${{ steps.pyinstaller.outputs.executable_path }}
         asset_name: StudentOnDuty.exe
