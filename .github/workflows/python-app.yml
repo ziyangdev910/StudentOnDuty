@@ -63,9 +63,9 @@ jobs:
     - name: rename
       run: |
         cd dist
-        mv StudentOnDuty StudentOnDuty.exe
         ls -la 
-        cp StudentOnDuty.exe ${{ github.workspace }}/StudentOnDuty.exe
+        cd StudentOnDuty
+        ls -la
 
     - name: Upload release
       uses: actions/upload-release-asset@v1
