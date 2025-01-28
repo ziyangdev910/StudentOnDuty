@@ -70,7 +70,7 @@ jobs:
         cd StudentOnDuty
         dir
         cd ..
-        Compress-Archive ./StudentOnDuty/ .\* ./ StudentOnDuty.zip
+        Compress-Archive -Path ./StudentOnDuty -DestinationPath ./
 
 
     #    mv StudentOnDuty StudentOnDuty.exe
