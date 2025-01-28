@@ -36,11 +36,7 @@ jobs:
         spec: 'StudentOnDuty.spec'
         requirements: 'requirements.txt'
         upload_exe_with_name: 'StudentOnDuty.exe'
-
-    - name: Copy file
-      run: |
-        cp ${{ steps.pyinstaller.outputs.executable_path }} ./StudentOnDuty.exe
-    
+        
     - name: Delete release
       uses: cb80/delrel@latest
       with:
@@ -65,7 +61,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: StudentOnDuty.exe
+        asset_path: ${{ steps.pyinstaller.outputs.executable_path }}/StudentOnDuty.exe
         asset_name: StudentOnDuty.exe
         asset_content_type: application/vnd.microsoft.portable-executable
 
