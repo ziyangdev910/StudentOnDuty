@@ -28,14 +28,14 @@ jobs:
         python -m pip install --upgrade pip
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-    - name: PyInstaller-Nac
+    - name: Build executable
       id: pyinstaller
-      uses: Nackophilz/pyinstaller-action@V1.0.1
+      uses: sayyid5416/pyinstaller@v1
       with:
         python_ver: '3.10'
-        spec: 'StudentOnDuty.spec'
+        spec: 'StudentOnDuty.py'
         requirements: 'requirements.txt'
-        upload_exe_with_name: 'StudentOnDuty.exe'
+        options: --onefile, --name "SOD_install",
         
     - name: Delete release
       uses: cb80/delrel@latest
@@ -43,25 +43,15 @@ jobs:
         tag: 'newest-push'
         token: ${{ secrets.GITHUB_TOKEN }}
     
-    - name: Create release
+    - name: Create Release
       id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      uses: ncipollo/release-action@v1
       with:
-        tag_name: newest-push
-        release_name: Newest Push            
+        artifacts: '${{ steps.pyinstaller.outputs.executable_path}}/SOD_install'
+        body: |
+          Newest Push
         draft: false
         prerelease: true
-    
-    - name: Upload release
-      uses: actions/upload-release-asset@v1
-      id: upload-release-asset
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ${{ steps.pyinstaller.outputs.executable_path }}/StudentOnDuty.exe
-        asset_name: StudentOnDuty.exe
-        asset_content_type: application/vnd.microsoft.portable-executable
+        tag: newest-push
+        allowUpdates: true
 
