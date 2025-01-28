@@ -1,0 +1,88 @@
+# This workflow will install Python dependencies, run tests and lint with a single version of Python
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
+
+name: Release
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  release:
+
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.10"
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+      #  if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+    - name: PyInstaller-Nac
+      id: pyinstaller
+      uses: Nackophilz/pyinstaller-action@V1.0.1
+      with:
+        python_ver: '3.10'
+        spec: 'StudentOnDuty.spec'
+        requirements: 'requirements.txt'
+        exe_path: './'
+      #  upload_exe_with_name: 'StudentOnDuty.zip'
+        
+
+    - name: Delete release
+      uses: cb80/delrel@latest
+      with:
+        tag: 'newest-push'
+        token: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Create release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: newest-push
+        release_name: Newest Push            
+        draft: false
+        prerelease: true
+    
+    #- name: Download the artifact
+    #  uses: actions/download-artifact@v3
+    #  with:
+    #    name: StudentOnDuty.exe
+    #    path: ./
+
+    - name: Zip the artifact
+      run: |
+        Copy-Item -Path "Desktop.ico" -Destination "./StudentOnDuty/Desktop.ico"
+        dir
+        cd StudentOnDuty
+        dir
+        cd ..
+        Compress-Archive -Path ./StudentOnDuty -DestinationPath ./StudentOnDuty.zip
+
+
+    #    mv StudentOnDuty StudentOnDuty.exe
+        
+
+    - name: Upload release
+      uses: actions/upload-release-asset@v1
+      id: upload-release-asset
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./StudentOnDuty.zip
+        asset_name: StudentOnDuty.zip
+        asset_content_type: application/zip
