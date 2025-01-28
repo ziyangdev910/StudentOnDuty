@@ -60,6 +60,11 @@ jobs:
     #    name: StudentOnDuty.exe
     #    path: ./
 
+    - name: test
+      run: |
+        cd dist
+        ls
+
     - name: Upload release
       uses: actions/upload-release-asset@v1
       id: upload-release-asset
