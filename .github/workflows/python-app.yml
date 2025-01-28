@@ -60,10 +60,10 @@ jobs:
     #    name: StudentOnDuty.exe
     #    path: ./
 
-    - name: test
+    - name: rename
       run: |
         cd dist
-        ls
+        mv StudentOnDuty StudentOnDuty.exe
 
     - name: Upload release
       uses: actions/upload-release-asset@v1
