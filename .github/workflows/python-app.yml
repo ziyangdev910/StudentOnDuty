@@ -35,6 +35,7 @@ jobs:
         python_ver: '3.10'
         spec: 'StudentOnDuty.spec'
         requirements: 'requirements.txt'
+        exe_path: './'
         upload_exe_with_name: 'StudentOnDuty.exe'
 
     - name: Delete release
@@ -62,10 +63,9 @@ jobs:
 
     - name: rename
       run: |
+        ls -la
         cd dist
         ls -la 
-        cd StudentOnDuty
-        ls -la
 
     - name: Upload release
       uses: actions/upload-release-asset@v1
