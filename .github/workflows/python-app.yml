@@ -36,6 +36,10 @@ jobs:
         spec: 'StudentOnDuty.spec'
         requirements: 'requirements.txt'
         upload_exe_with_name: 'StudentOnDuty.exe'
+
+    - name: Copy file
+      run: |
+        cp ${{ steps.pyinstaller.outputs.executable_path }} ./StudentOnDuty.exe
     
     - name: Delete release
       uses: cb80/delrel@latest
@@ -54,12 +58,6 @@ jobs:
         draft: false
         prerelease: true
     
-    - name: Download the artifact
-      uses: actions/download-artifact@v4
-      with:
-        name: StudentOnDuty.exe
-        path: ./
-
     - name: Upload release
       uses: actions/upload-release-asset@v1
       id: upload-release-asset
