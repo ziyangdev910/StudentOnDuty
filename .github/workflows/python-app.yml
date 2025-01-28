@@ -54,6 +54,12 @@ jobs:
         draft: false
         prerelease: true
     
+    - name: Download the artifact
+      uses: actions/download-artifact@v1
+      with:
+        name: my-artifact
+        path: StudentOnDuty.exe
+
     - name: Upload release
       uses: actions/upload-release-asset@v1
       id: upload-release-asset
@@ -61,7 +67,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ${{ steps.pyinstaller.outputs.executable_path }}
+        asset_path: StudentOnDuty.exe
         asset_name: StudentOnDuty.exe
         asset_content_type: application/vnd.microsoft.portable-executable
 
