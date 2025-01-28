@@ -57,7 +57,7 @@ jobs:
     - name: Download the artifact
       uses: actions/download-artifact@v1
       with:
-        name: my-artifact
+        name: StudentOnDuty.exe
         path: StudentOnDuty.exe
 
     - name: Upload release
