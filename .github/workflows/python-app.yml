@@ -66,8 +66,7 @@ jobs:
         ls -la
         cd StudentOnDuty
         ls -la 
-        cd StudentOnDuty
-        ls -la
+        mv StudentOnDuty StudentOnDuty.exe
 
     - name: Upload release
       uses: actions/upload-release-asset@v1
@@ -76,6 +75,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ${{ github.workspace }}/StudentOnDuty.exe
+        asset_path: ./StudentOnDuty/StudentOnDuty.exe
         asset_name: StudentOnDuty.exe
         asset_content_type: application/vnd.microsoft.portable-executable
