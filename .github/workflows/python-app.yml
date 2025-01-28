@@ -38,6 +38,7 @@ jobs:
         requirements: 'requirements.txt'
         exe_path: './'
         upload_exe_with_name: 'StudentOnDuty.zip'
+        options: '--onefile'
 
     - name: Delete release
       uses: cb80/delrel@latest
