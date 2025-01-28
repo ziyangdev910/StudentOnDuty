@@ -64,8 +64,10 @@ jobs:
     - name: rename
       run: |
         ls -la
-        cd dist
+        cd StudentOnDuty
         ls -la 
+        cd StudentOnDuty
+        ls -la
 
     - name: Upload release
       uses: actions/upload-release-asset@v1
