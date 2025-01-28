@@ -72,7 +72,10 @@ jobs:
         ls -la
         cd StudentOnDuty
         ls -la 
+        cd _internal
+        ls -la
     #    mv StudentOnDuty StudentOnDuty.exe
+        
 
     - name: Upload release
       uses: actions/upload-release-asset@v1
