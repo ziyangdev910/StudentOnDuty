@@ -70,7 +70,7 @@ jobs:
     - name: rename
       run: |
         ls -la
-        cd StudentOnDuty
+        cd out
         ls -la 
     #    mv StudentOnDuty StudentOnDuty.exe
         
