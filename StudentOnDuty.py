@@ -405,6 +405,12 @@ class SettingsDialog(QDialog):
         
         self.init_ui()
 
+    def on_students_changed(self):
+        """Handle updates when student list changes"""
+        students = self.students_edit.toPlainText().split("\n")
+        students = [s.strip() for s in students if s.strip()]
+        self.update_combo_boxes()
+
     def init_ui(self):
         self.setWindowTitle("设置")
         main_layout = QVBoxLayout()
@@ -415,6 +421,7 @@ class SettingsDialog(QDialog):
         self.students_edit = QTextEdit()
         self.students_edit.setPlaceholderText("请输入学生名单，每行一个名字")
         self.students_edit.setText("\n".join(self.main_window.settings["students"]))
+        self.students_edit.textChanged.connect(self.on_students_changed)
         students_layout.addWidget(self.students_edit)
         students_group.setLayout(students_layout)
         main_layout.addWidget(students_group)
