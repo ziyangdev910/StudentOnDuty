@@ -36,13 +36,7 @@ jobs:
         spec: 'StudentOnDuty.spec'
         requirements: 'requirements.txt'
         exe_path: './'
-        upload_exe_with_name: 'StudentOnDuty.exe'
-
-  release:
-
-    runs-on: ubuntu-latest
-    needs: [ build ]
-    steps:
+        upload_exe_with_name: 'StudentOnDuty.zip'
 
     - name: Delete release
       uses: cb80/delrel@latest
@@ -61,19 +55,19 @@ jobs:
         draft: false
         prerelease: true
     
-    - name: Download the artifact
-      uses: actions/download-artifact@v3
-      with:
-        name: StudentOnDuty.exe
-        path: ./
+    #- name: Download the artifact
+    #  uses: actions/download-artifact@v3
+    #  with:
+    #    name: StudentOnDuty.exe
+    #    path: ./
 
     - name: rename
       run: |
         ls -la
-        cd build
-        ls -la 
         cd StudentOnDuty
+        mv StudentOnDuty StudentOnDuty.exe
         ls -la
+
     #    mv StudentOnDuty StudentOnDuty.exe
         
 
@@ -84,6 +78,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: StudentOnDuty.exe
+        asset_path: ./StudentOnDuty/StudentOnDuty.exe
         asset_name: StudentOnDuty.exe
         asset_content_type: application/vnd.microsoft.portable-executable
