@@ -64,6 +64,7 @@ jobs:
       run: |
         cd dist
         mv StudentOnDuty StudentOnDuty.exe
+        ls
 
     - name: Upload release
       uses: actions/upload-release-asset@v1
@@ -72,6 +73,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ${{  steps.pyinstaller.outputs.executable_path }}
+        asset_path: ./dist/StudentOnDuty.exe
         asset_name: StudentOnDuty.exe
         asset_content_type: application/vnd.microsoft.portable-executable
