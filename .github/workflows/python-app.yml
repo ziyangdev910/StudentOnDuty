@@ -10,7 +10,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  release:
+  build:
 
     runs-on: ubuntu-latest
 
@@ -28,30 +28,50 @@ jobs:
         python -m pip install --upgrade pip
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-    - name: Build executable
+    - name: PyInstaller-Nac
       id: pyinstaller
-      uses: sayyid5416/pyinstaller@v1
+      uses: Nackophilz/pyinstaller-action@V1.0.1
       with:
         python_ver: '3.10'
-        spec: 'StudentOnDuty.py'
+        spec: 'StudentOnDuty.spec'
         requirements: 'requirements.txt'
-        options: --onefile, --name "SOD_install",
-        
+        upload_exe_with_name: 'StudentOnDuty.exe'
+    
+  release:
+
+    runs-on: ubuntu-latest
+    
+    steps:
     - name: Delete release
       uses: cb80/delrel@latest
       with:
         tag: 'newest-push'
         token: ${{ secrets.GITHUB_TOKEN }}
     
-    - name: Create Release
+    - name: Create release
       id: create_release
-      uses: ncipollo/release-action@v1
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        artifacts: '${{ steps.pyinstaller.outputs.executable_path}}/SOD_install'
-        body: |
-          Newest Push
+        tag_name: newest-push
+        release_name: Newest Push            
         draft: false
         prerelease: true
-        tag: newest-push
-        allowUpdates: true
+    
+    - name: Download the artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: StudentOnDuty.exe
+        path: ./
 
+    - name: Upload release
+      uses: actions/upload-release-asset@v1
+      id: upload-release-asset
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: StudentOnDuty.exe
+        asset_name: StudentOnDuty.exe
+        asset_content_type: application/vnd.microsoft.portable-executable
