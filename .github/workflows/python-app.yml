@@ -65,12 +65,12 @@ jobs:
       uses: actions/download-artifact@v3
       with:
         name: StudentOnDuty.exe
-        path: ./out/
+        path: ./
 
     - name: rename
       run: |
         ls -la
-        cd out
+        cd build
         ls -la 
     #    mv StudentOnDuty StudentOnDuty.exe
         
