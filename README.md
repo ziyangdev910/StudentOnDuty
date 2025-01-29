@@ -19,6 +19,6 @@
 1. 在虚拟环境env中安装pyinstaller：`pip install pyinstaller`；
 2. 切换命令行的工作目录到文件 `StudentOnDuty.py`所在目录，在虚拟环境env中运行：
    `pyinstaller StudentOnDuty.spec`
-   或者`pyinstaller --noconsole --add-data "Tray.png;." StudentOnDuty.py`
+   或者`pyinstaller --noconsole --add-data "Tray.png;." --icon Tray.png StudentOnDuty.py`
    将会在 `.\dist\StudentOnDuty`目录下生成可执行文件与相关支持文件；
 3. 现在可以正常运行程序了。
