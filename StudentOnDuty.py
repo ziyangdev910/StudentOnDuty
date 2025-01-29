@@ -73,7 +73,7 @@ class MainWindow(QMainWindow):
         """初始化系统托盘"""
         self.tray_icon = QSystemTrayIcon(self)
         self.tray_icon.setIcon(QIcon(r"Desktop.ico"))
-        self.tray_icon.setToolTip("StudentOnDuty_V1.0.2")
+        self.tray_icon.setToolTip("StudentOnDuty")
         self.create_tray_menu()  # 创建托盘菜单
         self.tray_icon.show()
 

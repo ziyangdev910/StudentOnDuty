@@ -71,7 +71,7 @@ jobs:
         cd StudentOnDuty
         dir
         cd ..
-        Compress-Archive -Path ./StudentOnDuty -DestinationPath ./StudentOnDuty-${{ github.run_number }}.zip
+        Compress-Archive -Path ./StudentOnDuty -DestinationPath ./StudentOnDuty V1.0.${{ github.run_number }}.zip
 
 
     #    mv StudentOnDuty StudentOnDuty.exe 
@@ -84,6 +84,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./StudentOnDuty-${{ github.run_number }}.zip
-        asset_name: StudentOnDuty-${{ github.run_number }}.zip
+        asset_path: ./StudentOnDuty V1.0.${{ github.run_number }}.zip
+        asset_name: StudentOnDuty V1.0.${{ github.run_number }}.zip
         asset_content_type: application/zip
