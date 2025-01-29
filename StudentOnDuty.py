@@ -9,6 +9,7 @@ from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QFont, QIcon
 import datetime
 import json
+VERSION = "V1.0.11"
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -76,7 +77,7 @@ class MainWindow(QMainWindow):
         """初始化系统托盘"""
         self.tray_icon = QSystemTrayIcon(self)
         self.tray_icon.setIcon(QIcon(os.path.join(self.base_path, "Tray.png")))
-        self.tray_icon.setToolTip("StudentOnDuty V1.0.10")
+        self.tray_icon.setToolTip("StudentOnDuty " + VERSION)
         self.create_tray_menu()  # 创建托盘菜单
         self.tray_icon.show()
 
