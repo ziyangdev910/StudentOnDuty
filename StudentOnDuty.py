@@ -17,6 +17,9 @@ class MainWindow(QMainWindow):
         self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
         
         # 加载设置
+        self.base_path = os.path.dirname(os.path.abspath(__file__))
+        # 这个base_path在真实情况下，指向的是主程序同目录下的_internal文件夹
+        # 所以，放Tray.png应该放在_internal文件夹下，而非主程序目录下！！！
         self.load_settings()
         
         # 创建主窗口组件
@@ -72,8 +75,8 @@ class MainWindow(QMainWindow):
     def setup_tray(self):
         """初始化系统托盘"""
         self.tray_icon = QSystemTrayIcon(self)
-        self.tray_icon.setIcon(QIcon(r"Desktop.ico"))
-        self.tray_icon.setToolTip("StudentOnDuty")
+        self.tray_icon.setIcon(QIcon(os.path.join(self.base_path, "Tray.png")))
+        self.tray_icon.setToolTip("StudentOnDuty V1.0.9")
         self.create_tray_menu()  # 创建托盘菜单
         self.tray_icon.show()
 
@@ -196,7 +199,7 @@ class MainWindow(QMainWindow):
         }
         
         try:
-            with open("settings.json", "r", encoding="utf-8") as f:
+            with open(os.path.join(self.base_path, "settings.json"), "r", encoding="utf-8") as f:
                 saved_settings = json.load(f)
                 self.settings = default_settings | saved_settings
         except FileNotFoundError:
@@ -242,7 +245,7 @@ class MainWindow(QMainWindow):
         self.save_settings()
 
     def save_settings(self):
-        with open("settings.json", "w", encoding="utf-8") as f:
+        with open(os.path.join(self.base_path, "settings.json"), "w", encoding="utf-8") as f:
             json.dump(self.settings, f, ensure_ascii=False, indent=4)
 
     def update_window_geometry(self):
@@ -401,7 +404,8 @@ class SettingsDialog(QDialog):
         self.main_window = main_window
         
         # 设置窗口图标
-        self.setWindowIcon(QIcon(r"Desktop.ico"))
+        self.base_path = os.path.dirname(os.path.abspath(__file__))
+        self.setWindowIcon(QIcon(os.path.join(self.base_path, "Tray.png")))
         
         self.init_ui()
 
@@ -542,13 +546,8 @@ class SettingsDialog(QDialog):
                                0, winreg.KEY_ALL_ACCESS)
             try:
                 if enable:
-                    # 获取批处理文件路径
-                    bat_path = os.path.join(os.path.dirname(app_path), "startup.bat")
-                    if not os.path.exists(bat_path):
-                        raise FileNotFoundError(f"批处理文件不存在: {bat_path}")
-                        
-                    # 设置开机启动指向批处理文件
-                    winreg.SetValueEx(key, "StudentOnDuty", 0, winreg.REG_SZ, f'"{bat_path}"')
+                    # 设置开机启动指向主程序
+                    winreg.SetValueEx(key, "StudentOnDuty", 0, winreg.REG_SZ, f'"{app_path}"')
                 else:
                     # 删除开机启动项
                     try:
@@ -568,40 +567,22 @@ class SettingsDialog(QDialog):
         # 保存学生名单
         students = self.students_edit.toPlainText().split("\n")
         students = [s.strip() for s in students if s.strip()]
-        old_students = self.main_window.settings["students"]
+        # old_students = self.main_window.settings["students"]
         self.main_window.settings["students"] = students
         
         # 处理学生名单的更新
         if students:  # 如果有学生
-            if not old_students:  # 如果是第一次添加学生
-                # 设置第一个学生为值日值周生
-                first_student = students[0]
-                self.main_window.settings["current_weekly"] = first_student
-                self.main_window.settings["current_daily"] = first_student
+            # 下拉框自动更新，则框内必然有学生
+            new_weekly = self.weekly_combo.currentText()
+            new_daily = self.daily_combo.currentText()
                 
-                # 更新主界面显示
-                self.main_window.weekly_label.setText(f"值周：{first_student}")
-                self.main_window.daily_label.setText(f"值日：{first_student}")
+            if new_weekly:
+                self.main_window.settings["current_weekly"] = new_weekly
+                self.main_window.weekly_label.setText(f"值周：{new_weekly}")
                 
-                # 更新下拉框
-                self.weekly_combo.clear()
-                self.daily_combo.clear()
-                self.weekly_combo.addItems(students)
-                self.daily_combo.addItems(students)
-                self.weekly_combo.setCurrentText(first_student)
-                self.daily_combo.setCurrentText(first_student)
-            else:
-                # 如果已有学生，使用下拉框的选择
-                new_weekly = self.weekly_combo.currentText()
-                new_daily = self.daily_combo.currentText()
-                
-                if new_weekly:
-                    self.main_window.settings["current_weekly"] = new_weekly
-                    self.main_window.weekly_label.setText(f"值周：{new_weekly}")
-                
-                if new_daily:
-                    self.main_window.settings["current_daily"] = new_daily
-                    self.main_window.daily_label.setText(f"值日：{new_daily}")
+            if new_daily:
+                self.main_window.settings["current_daily"] = new_daily
+                self.main_window.daily_label.setText(f"值日：{new_daily}")
         
         # 保存窗口设置
         self.main_window.settings["opacity"] = self.opacity_spin.value()

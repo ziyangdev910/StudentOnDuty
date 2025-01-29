@@ -5,7 +5,7 @@ a = Analysis(
     ['StudentOnDuty.py'],
     pathex=[],
     binaries=[],
-    datas=[],
+    datas=[('Tray.png', '.')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
@@ -32,7 +32,6 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon=['Desktop.ico'],
 )
 coll = COLLECT(
     exe,

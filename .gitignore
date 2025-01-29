@@ -4,3 +4,4 @@ dist/*
 *.exe
 *.json
 *.zip
+test_path.py
