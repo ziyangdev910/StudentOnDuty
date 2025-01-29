@@ -1,3 +1,3 @@
-t@echo off
+@echo off
 cd /d "%~dp0"
 start "" "StudentOnDuty.exe"
