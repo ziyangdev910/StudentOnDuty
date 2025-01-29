@@ -1,3 +1,2 @@
-@echo off
-cd /d "%~dp0"
-start "" "StudentOnDuty.exe"
+@cd /d "%~dp0"
+@start "" "StudentOnDuty.exe"
