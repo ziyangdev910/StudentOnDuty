@@ -53,7 +53,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         tag_name: newest-push
-        release_name: Newest Push            
+        release_name: StudentOnDuty-${{ github.run_number }}            
         draft: false
         prerelease: true
     
@@ -66,11 +66,12 @@ jobs:
     - name: Zip the artifact
       run: |
         Copy-Item -Path "Desktop.ico" -Destination "./StudentOnDuty/Desktop.ico"
+        Copy-Item -Path "startup.bat" -Destination "./StudentOnDuty/startup.bat"
         dir
         cd StudentOnDuty
         dir
         cd ..
-        Compress-Archive -Path ./StudentOnDuty -DestinationPath ./StudentOnDuty.zip
+        Compress-Archive -Path ./StudentOnDuty -DestinationPath ./StudentOnDuty-${{ github.run_number }}.zip
 
 
     #    mv StudentOnDuty StudentOnDuty.exe 
@@ -83,6 +84,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./StudentOnDuty.zip
-        asset_name: StudentOnDuty.zip
+        asset_path: ./StudentOnDuty-${{ github.run_number }}.zip
+        asset_name: StudentOnDuty-${{ github.run_number }}.zip
         asset_content_type: application/zip
