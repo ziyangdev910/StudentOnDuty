@@ -73,7 +73,7 @@ jobs:
         Compress-Archive -Path ./StudentOnDuty -DestinationPath ./StudentOnDuty.zip
 
 
-    #    mv StudentOnDuty StudentOnDuty.exe
+    #    mv StudentOnDuty StudentOnDuty.exe 
         
 
     - name: Upload release
