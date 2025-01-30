@@ -43,7 +43,7 @@ jobs:
     - name: Delete release
       uses: cb80/delrel@latest
       with:
-        tag: 'newest-push'
+        tag: 'latest-push'
         token: ${{ secrets.GITHUB_TOKEN }}
     
     - name: Create release
@@ -52,7 +52,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: newest-push
+        tag_name: latest-push
         release_name: StudentOnDuty V1.0.${{ github.run_number }}            
         draft: false
         prerelease: true
@@ -65,8 +65,6 @@ jobs:
 
     - name: Zip the artifact
       run: |
-        Copy-Item -Path "Desktop.ico" -Destination "./StudentOnDuty/Desktop.ico"
-        Copy-Item -Path "startup.bat" -Destination "./StudentOnDuty/startup.bat"
         dir
         cd StudentOnDuty
         dir
