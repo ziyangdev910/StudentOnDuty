@@ -2,10 +2,10 @@
 
 
 a = Analysis(
-    ['StudentOnDuty.py'],
+    ['src\\StudentOnDuty.py','src\\SettingsDialog.py'],
     pathex=[],
     binaries=[],
-    datas=[('Tray.png', '.')],
+    datas=[('src\\img\\Tray.png', '.')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
@@ -32,7 +32,7 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon=['Tray.ico'],
+    icon=['src\\img\\Tray.ico'],
 )
 coll = COLLECT(
     exe,
