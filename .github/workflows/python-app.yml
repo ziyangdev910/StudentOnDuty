@@ -51,6 +51,11 @@ jobs:
         dir
         cd StudentOnDuty
         dir
+        cd _internal
+        mkdir img
+        Move-Item Tray.png img/Tray.png
+        dir
+        cd ..
         cd ..
         Compress-Archive -Path ./StudentOnDuty -DestinationPath ./StudentOnDuty_V1.0.${{ github.run_number }}.zip
 
