@@ -31,7 +31,7 @@ jobs:
 
     - name: PyInstaller-Nac
       id: pyinstaller
-      uses: Nackophilz/pyinstaller-action@V1.0.1
+      uses: GLgele/pyinstaller-action@v1
       with:
         python_ver: '3.10'
         spec: 'StudentOnDuty.spec'
@@ -45,23 +45,6 @@ jobs:
       with:
         tag: 'latest-push'
         token: ${{ secrets.GITHUB_TOKEN }}
-    
-    - name: Create release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: latest-push
-        release_name: StudentOnDuty V1.0.${{ github.run_number }}            
-        draft: false
-        prerelease: true
-    
-    #- name: Download the artifact
-    #  uses: actions/download-artifact@v3
-    #  with:
-    #    name: StudentOnDuty.exe
-    #    path: ./
 
     - name: Zip the artifact
       run: |
@@ -72,8 +55,16 @@ jobs:
         Compress-Archive -Path ./StudentOnDuty -DestinationPath ./StudentOnDuty_V1.0.${{ github.run_number }}.zip
 
 
-    #    mv StudentOnDuty StudentOnDuty.exe 
-        
+    - name: Create release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: latest-push
+        release_name: StudentOnDuty V1.0.${{ github.run_number }}            
+        draft: false
+        prerelease: true
 
     - name: Upload release
       uses: actions/upload-release-asset@v1
