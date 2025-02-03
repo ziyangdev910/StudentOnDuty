@@ -77,7 +77,7 @@ class MainWindow(QMainWindow):
     def setup_tray(self):
         """初始化系统托盘"""
         self.tray_icon = QSystemTrayIcon(self)
-        self.tray_icon.setIcon(QIcon(os.path.join(self.base_path, "Tray.png")))
+        self.tray_icon.setIcon(QIcon(os.path.join(self.base_path, "img/Tray.png")))
         self.tray_icon.setToolTip("StudentOnDuty " + VERSION)
         self.create_tray_menu()  # 创建托盘菜单
         self.tray_icon.show()
