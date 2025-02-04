@@ -10,7 +10,7 @@ import json
 
 from SettingsDialog import *
 
-VERSION = "V1.0.11"
+VERSION = "V1.0.16"
 
 class MainWindow(QMainWindow):
     def __init__(self):
