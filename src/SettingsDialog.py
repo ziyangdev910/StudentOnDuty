@@ -21,7 +21,7 @@ class SettingsDialog(QDialog):
         
         # 设置窗口图标
         self.base_path = os.path.dirname(os.path.abspath(__file__))
-        self.setWindowIcon(QIcon(os.path.join(self.base_path, "Tray.png")))
+        self.setWindowIcon(QIcon(os.path.join(self.base_path, "img/Tray.png")))
         
         self.init_ui()
 
