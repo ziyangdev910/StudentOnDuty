@@ -21,7 +21,7 @@ class MainWindow(QMainWindow):
         # 加载设置
         self.base_path = os.path.dirname(os.path.abspath(__file__))
         # 这个base_path在真实情况下，指向的是主程序同目录下的_internal文件夹
-        # 所以，放Tray.png应该放在_internal文件夹下，而非主程序目录下！！！
+        # 所以，Tray.png应该放在_internal/img文件夹下！！！
         self.load_settings()
         
         # 创建主窗口组件
