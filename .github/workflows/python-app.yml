@@ -58,7 +58,7 @@ jobs:
         $newVersion = $versionParts -join '.'
         Set-Content -Path $filePath -Value $newVersion
         Write-Output "New version: $newVersion"
-        git add *
+        git add src/VERSION
         git commit -m "Bump version to $newVersion"
         git push 
         Compress-Archive -Path ./StudentOnDuty -DestinationPath "./StudentOnDuty_$newVersion.zip"
