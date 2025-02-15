@@ -49,6 +49,8 @@ jobs:
     - name: Zip the artifact
       id: zip
       run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
         $filePath = "src/VERSION"
         $version = Get-Content -Path $filePath
         $versionParts = $version -split '\.'
@@ -57,10 +59,12 @@ jobs:
         Set-Content -Path $filePath -Value $newVersion
         Write-Output "New version: $newVersion"
         git commit -m "Bump version to $newVersion"
-        git push
+        git push 
         Compress-Archive -Path ./StudentOnDuty -DestinationPath "./StudentOnDuty_$newVersion.zip"
         $envFile = "$env:GITHUB_ENV"
         "NEW_VERSION=$newVersion" | Out-File -FilePath $envFile -Append
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 
     - name: Create release
