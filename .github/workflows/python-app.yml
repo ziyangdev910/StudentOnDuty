@@ -51,7 +51,7 @@ jobs:
         $filePath = "src/VERSION"
         $version = Get-Content -Path $filePath
         $versionParts = $version -split '\.'
-        $versionParts[-1] = [int]$versionParts[-1] + 1
+        $versionParts[-1] = ${{ github.run_number }}
         $newVersion = $versionParts -join '.'
         Set-Content -Path $filePath -Value $newVersion
         Write-Output "New version: $newVersion"
