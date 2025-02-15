@@ -5,3 +5,4 @@ __pycache__
 *.exe
 settings.json
 *.zip
+update.ps1

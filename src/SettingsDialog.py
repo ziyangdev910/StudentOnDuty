@@ -31,6 +31,29 @@ class SettingsDialog(QDialog):
         students = [s.strip() for s in students if s.strip()]
         self.update_combo_boxes()
 
+    def apply_window_changes(self):
+        # Apply font changes
+        new_font = QFont(self.font_combo.currentFont().family())
+        new_font.setPointSize(self.font_spin.value())
+        self.main_window.weekly_label.setFont(new_font)
+        self.main_window.daily_label.setFont(new_font)
+    
+        # Apply opacity
+        self.main_window.setWindowOpacity(self.opacity_spin.value())
+    
+        # Apply window size
+        self.main_window.settings["window_size_ratio"] = self.size_spin.value()
+        self.main_window.update_window_geometry()
+        
+        # Apply window flags (always on top)
+        self.main_window.settings["always_on_top"] = self.always_on_top_check.isChecked()
+        self.main_window.update_window_flags()
+        
+        # Update settings dictionary
+        self.main_window.settings["font_family"] = self.font_combo.currentFont().family()
+        self.main_window.settings["font_size"] = self.font_spin.value()
+        self.main_window.settings["opacity"] = self.opacity_spin.value()
+
     def init_ui(self):
         self.setWindowTitle("设置")
         main_layout = QVBoxLayout()
@@ -114,6 +137,13 @@ class SettingsDialog(QDialog):
         window_group.setLayout(window_layout)
         main_layout.addWidget(window_group)
         
+        # connections
+        self.opacity_spin.valueChanged.connect(self.apply_window_changes)
+        self.size_spin.valueChanged.connect(self.apply_window_changes)
+        self.font_combo.currentFontChanged.connect(self.apply_window_changes)
+        self.font_spin.valueChanged.connect(self.apply_window_changes)
+        self.always_on_top_check.toggled.connect(self.apply_window_changes)
+
 
         # 4. 跳过日期设置
         skip_group = QGroupBox("跳过日期设置")

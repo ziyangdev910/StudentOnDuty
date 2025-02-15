@@ -48,7 +48,16 @@ jobs:
 
     - name: Zip the artifact
       run: |
-        Compress-Archive -Path ./StudentOnDuty -DestinationPath ./StudentOnDuty_V1.0.${{ github.run_number }}.zip
+        $filePath = "src/VERSION"
+        $version = Get-Content -Path $filePath
+        $versionParts = $version -split '\.'
+        $versionParts[-1] = [int]$versionParts[-1] + 1
+        $newVersion = $versionParts -join '.'
+        Set-Content -Path $filePath -Value $newVersion
+        Write-Output "New version: $newVersion"
+        git commit -m "Bump version to $newVersion"
+        git push
+        Compress-Archive -Path ./StudentOnDuty -DestinationPath "./StudentOnDuty_$newVersion.zip"
 
 
     - name: Create release
