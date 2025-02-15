@@ -1,7 +1,8 @@
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (QTextEdit, QVBoxLayout, QHBoxLayout, QPushButton, 
                             QLabel, QSpinBox, QDoubleSpinBox, QComboBox, QCheckBox,
-                            QGroupBox, QDialog, QFontComboBox)
+                            QGroupBox, QDialog, QFontComboBox, QGridLayout)
+
 from PyQt6.QtGui import QIcon, QFont
 import os
 import sys
@@ -21,8 +22,7 @@ class SettingsDialog(QDialog):
         
         # 设置窗口图标
         self.base_path = os.path.dirname(os.path.abspath(__file__))
-        self.setWindowIcon(QIcon(os.path.join(self.base_path, "Tray.png")))
-        
+        self.setWindowIcon(QIcon(os.path.join(self.base_path, "img/Tray.png")))      
         self.init_ui()
 
     # 监听学生名单改变
@@ -114,12 +114,30 @@ class SettingsDialog(QDialog):
         window_group.setLayout(window_layout)
         main_layout.addWidget(window_group)
         
-        # 4. 开机自启动设置
+
+        # 4. 跳过日期设置
+        skip_group = QGroupBox("跳过日期设置")
+        skip_layout = QGridLayout()
+        
+        # 周一到周日复选框
+        self.skip_checks = []
+        days = ["周一", "周二", "周三", "周四", "周五", "周六", "周日"]
+        for i, day in enumerate(days):
+            check = QCheckBox(day)
+            check.setChecked(day in self.main_window.settings.get("skip_days", []))
+            self.skip_checks.append(check)
+            skip_layout.addWidget(check, i // 3, i % 3)  # 3列网格布局
+            
+        skip_group.setLayout(skip_layout)
+        main_layout.addWidget(skip_group)
+        
+        # 5. 开机自启动设置
         self.autostart_check = QCheckBox("开机自动启动")
         self.autostart_check.setChecked(self.main_window.settings["autostart"])
         main_layout.addWidget(self.autostart_check)
         
-        # 5. 保存按钮
+
+        # 6. 保存按钮
         save_button = QPushButton("保存设置")
         save_button.clicked.connect(self.save_settings)
         main_layout.addWidget(save_button)
@@ -223,6 +241,7 @@ class SettingsDialog(QDialog):
         self.main_window.settings["last_update"] = str(datetime.date.today())
         
         # 保存所有设置到文件
+        self.main_window.settings["skip_days"] = [day for day, check in zip(["周一", "周二", "周三", "周四", "周五", "周六", "周日"], self.skip_checks) if check.isChecked()]
         self.main_window.save_settings()
 
         # 设置开机自动启动
@@ -237,4 +256,5 @@ class SettingsDialog(QDialog):
     def closeEvent(self, event):
         """重写关闭事件"""
         self.hide()  # 隐藏窗口
+        event.ignore()  # 忽略关闭事件，防止窗口被销毁
         event.ignore()  # 忽略关闭事件，防止窗口被销毁

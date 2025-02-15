@@ -2,10 +2,10 @@
 
 
 a = Analysis(
-    ['src\\StudentOnDuty.py','src\\SettingsDialog.py'],
+    ['src\\StudentOnDuty.py'],
     pathex=[],
     binaries=[],
-    datas=[('src\\img\\Tray.png', '.')],
+    datas=[('src/img/Tray.png', './img/'), ('src/img/Tray.ico', './img/')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},

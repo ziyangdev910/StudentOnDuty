@@ -10,7 +10,8 @@ import json
 
 from SettingsDialog import *
 
-VERSION = "V1.0.11"
+VERSION = "V1.0.17"
+
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -198,6 +199,7 @@ class MainWindow(QMainWindow):
                 "x": -1,
                 "y": -1
             },
+            "skip_days": [],  # 添加跳过日期设置
         }
         
         try:
@@ -223,18 +225,24 @@ class MainWindow(QMainWindow):
             
         today = datetime.date.today()
         
-        # 更新值周生（每周一更新）
-        if today.weekday() == 0 or not self.settings["current_weekly"]:
-            weekly_index = self.settings["students"].index(self.settings["current_weekly"]) if self.settings["current_weekly"] else -1
-            weekly_index = (weekly_index + 1) % len(self.settings["students"])
-            self.settings["current_weekly"] = self.settings["students"][weekly_index]
-            
-        # 更新值日生（每天更新）
-        if str(today) != self.settings["last_update"]:
-            daily_index = self.settings["students"].index(self.settings["current_daily"]) if self.settings["current_daily"] else -1
-            daily_index = (daily_index + 1) % len(self.settings["students"])
-            self.settings["current_daily"] = self.settings["students"][daily_index]
-            self.settings["last_update"] = str(today)
+        # 将周几转换为中文表示
+        weekdays = ["周一", "周二", "周三", "周四", "周五", "周六", "周日"]
+        current_day = weekdays[today.weekday()]
+        
+        # 如果当前日期在跳过列表中，则不更新
+        if not current_day in self.settings.get("skip_days", []):  
+            # 更新值周生（每周一更新）
+            if today.weekday() == 0 or not self.settings["current_weekly"]:
+                weekly_index = self.settings["students"].index(self.settings["current_weekly"]) if self.settings["current_weekly"] else -1
+                weekly_index = (weekly_index + 1) % len(self.settings["students"])
+                self.settings["current_weekly"] = self.settings["students"][weekly_index]
+                
+            # 更新值日生（每天更新）
+            if str(today) != self.settings["last_update"]:
+                daily_index = self.settings["students"].index(self.settings["current_daily"]) if self.settings["current_daily"] else -1
+                daily_index = (daily_index + 1) % len(self.settings["students"])
+                self.settings["current_daily"] = self.settings["students"][daily_index]
+                self.settings["last_update"] = str(today)
         
         # 更新显示
         self.weekly_label.setText(f"值周：{self.settings['current_weekly']}")
