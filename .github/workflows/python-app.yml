@@ -58,6 +58,8 @@ jobs:
         git commit -m "Bump version to $newVersion"
         git push
         Compress-Archive -Path ./StudentOnDuty -DestinationPath "./StudentOnDuty_$newVersion.zip"
+        $envFile = "$env:GITHUB_ENV"
+        "NEW_VERSION=$newVersion" | Out-File -FilePath $envFile -Append
 
 
     - name: Create release
@@ -67,7 +69,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         tag_name: latest-push
-        release_name: StudentOnDuty V1.0.${{ github.run_number }}            
+        release_name: StudentOnDuty ${{ GITHUB_ENV:NEW_VERSION }}
         draft: false
         prerelease: true
 
@@ -78,6 +80,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./StudentOnDuty_V1.0.${{ github.run_number }}.zip
-        asset_name: StudentOnDuty_V1.0.${{ github.run_number }}.zip
+        asset_path: ./StudentOnDuty_${{ GITHUB_ENV:NEW_VERSION }}.zip
+        asset_name: StudentOnDuty_${{ GITHUB_ENV:NEW_VERSION }}.zip
         asset_content_type: application/zip
