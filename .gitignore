@@ -1,7 +1,8 @@
-env/
-build/
-dist/
-src/__pycache__/
+env/*
+build/*
+dist/*
+__pycache__
 *.exe
 settings.json
 *.zip
+update.ps1
