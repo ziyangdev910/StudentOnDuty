@@ -12,6 +12,7 @@ from SettingsDialog import *
 
 VERSION = "V1.0.17"
 
+
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()

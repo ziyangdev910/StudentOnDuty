@@ -2,6 +2,7 @@ from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (QTextEdit, QVBoxLayout, QHBoxLayout, QPushButton, 
                             QLabel, QSpinBox, QDoubleSpinBox, QComboBox, QCheckBox,
                             QGroupBox, QDialog, QFontComboBox, QGridLayout)
+
 from PyQt6.QtGui import QIcon, QFont
 import os
 import sys
@@ -21,10 +22,10 @@ class SettingsDialog(QDialog):
         
         # 设置窗口图标
         self.base_path = os.path.dirname(os.path.abspath(__file__))
-        self.setWindowIcon(QIcon(os.path.join(self.base_path, "img/Tray.png")))
-        
+        self.setWindowIcon(QIcon(os.path.join(self.base_path, "img/Tray.png")))      
         self.init_ui()
 
+    # 监听学生名单改变
     def on_students_changed(self):
         students = self.students_edit.toPlainText().split("\n")
         students = [s.strip() for s in students if s.strip()]
@@ -113,6 +114,7 @@ class SettingsDialog(QDialog):
         window_group.setLayout(window_layout)
         main_layout.addWidget(window_group)
         
+
         # 4. 跳过日期设置
         skip_group = QGroupBox("跳过日期设置")
         skip_layout = QGridLayout()
@@ -134,6 +136,7 @@ class SettingsDialog(QDialog):
         self.autostart_check.setChecked(self.main_window.settings["autostart"])
         main_layout.addWidget(self.autostart_check)
         
+
         # 6. 保存按钮
         save_button = QPushButton("保存设置")
         save_button.clicked.connect(self.save_settings)
@@ -198,10 +201,12 @@ class SettingsDialog(QDialog):
         # 保存学生名单
         students = self.students_edit.toPlainText().split("\n")
         students = [s.strip() for s in students if s.strip()]
+        # old_students = self.main_window.settings["students"]
         self.main_window.settings["students"] = students
         
         # 处理学生名单的更新
         if students:  # 如果有学生
+            # 下拉框自动更新，则框内必然有学生
             new_weekly = self.weekly_combo.currentText()
             new_daily = self.daily_combo.currentText()
                 
@@ -251,4 +256,5 @@ class SettingsDialog(QDialog):
     def closeEvent(self, event):
         """重写关闭事件"""
         self.hide()  # 隐藏窗口
+        event.ignore()  # 忽略关闭事件，防止窗口被销毁
         event.ignore()  # 忽略关闭事件，防止窗口被销毁
