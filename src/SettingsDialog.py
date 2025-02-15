@@ -1,7 +1,7 @@
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (QTextEdit, QVBoxLayout, QHBoxLayout, QPushButton, 
                             QLabel, QSpinBox, QDoubleSpinBox, QComboBox, QCheckBox,
-                            QGroupBox, QDialog, QFontComboBox)
+                            QGroupBox, QDialog, QFontComboBox, QGridLayout)
 from PyQt6.QtGui import QIcon, QFont
 import os
 import sys
@@ -25,7 +25,6 @@ class SettingsDialog(QDialog):
         
         self.init_ui()
 
-    # 监听学生名单改变
     def on_students_changed(self):
         students = self.students_edit.toPlainText().split("\n")
         students = [s.strip() for s in students if s.strip()]
@@ -114,12 +113,28 @@ class SettingsDialog(QDialog):
         window_group.setLayout(window_layout)
         main_layout.addWidget(window_group)
         
-        # 4. 开机自启动设置
+        # 4. 跳过日期设置
+        skip_group = QGroupBox("跳过日期设置")
+        skip_layout = QGridLayout()
+        
+        # 周一到周日复选框
+        self.skip_checks = []
+        days = ["周一", "周二", "周三", "周四", "周五", "周六", "周日"]
+        for i, day in enumerate(days):
+            check = QCheckBox(day)
+            check.setChecked(day in self.main_window.settings.get("skip_days", []))
+            self.skip_checks.append(check)
+            skip_layout.addWidget(check, i // 3, i % 3)  # 3列网格布局
+            
+        skip_group.setLayout(skip_layout)
+        main_layout.addWidget(skip_group)
+        
+        # 5. 开机自启动设置
         self.autostart_check = QCheckBox("开机自动启动")
         self.autostart_check.setChecked(self.main_window.settings["autostart"])
         main_layout.addWidget(self.autostart_check)
         
-        # 5. 保存按钮
+        # 6. 保存按钮
         save_button = QPushButton("保存设置")
         save_button.clicked.connect(self.save_settings)
         main_layout.addWidget(save_button)
@@ -183,12 +198,10 @@ class SettingsDialog(QDialog):
         # 保存学生名单
         students = self.students_edit.toPlainText().split("\n")
         students = [s.strip() for s in students if s.strip()]
-        # old_students = self.main_window.settings["students"]
         self.main_window.settings["students"] = students
         
         # 处理学生名单的更新
         if students:  # 如果有学生
-            # 下拉框自动更新，则框内必然有学生
             new_weekly = self.weekly_combo.currentText()
             new_daily = self.daily_combo.currentText()
                 
@@ -223,6 +236,7 @@ class SettingsDialog(QDialog):
         self.main_window.settings["last_update"] = str(datetime.date.today())
         
         # 保存所有设置到文件
+        self.main_window.settings["skip_days"] = [day for day, check in zip(["周一", "周二", "周三", "周四", "周五", "周六", "周日"], self.skip_checks) if check.isChecked()]
         self.main_window.save_settings()
 
         # 设置开机自动启动
