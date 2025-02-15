@@ -31,7 +31,7 @@ jobs:
 
     - name: PyInstaller-Nac
       id: pyinstaller
-      uses: GLgele/pyinstaller-action@v1
+      uses: KeyFac/pyinstaller-action@v1
       with:
         python_ver: '3.10'
         spec: 'StudentOnDuty.spec'
