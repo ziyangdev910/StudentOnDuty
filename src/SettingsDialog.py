@@ -8,6 +8,8 @@ import os
 import sys
 import winreg
 import datetime
+import json
+from UpdateForm import *
 
 class SettingsDialog(QDialog):
     def __init__(self, main_window):
@@ -54,11 +56,19 @@ class SettingsDialog(QDialog):
         self.main_window.settings["font_size"] = self.font_spin.value()
         self.main_window.settings["opacity"] = self.opacity_spin.value()
 
+    def check_update(self):
+        urls = {0:"https://api.github.com/repos/ziyangdev910/StudentOnDuty/releases/latest", 1:""}
+        r = requests.get(urls[self.updateSourceComboBox.currentIndex()],verify=False)
+        data = json.loads(r.text)
+        durl = data["assets"][0]["browser_download_url"]
+        widget = DownloadWidget(url=durl, file_path=durl.split("/")[-1])
+        widget.show()
+
     def init_ui(self):
         self.setWindowTitle("设置")
         main_layout = QVBoxLayout()
         
-        # 1. 学生名单设置组
+        # 学生名单设置组
         students_group = QGroupBox("学生名单设置")
         students_layout = QVBoxLayout()
         self.students_edit = QTextEdit()
@@ -69,7 +79,7 @@ class SettingsDialog(QDialog):
         students_group.setLayout(students_layout)
         main_layout.addWidget(students_group)
         
-        # 2. 当前值日值周生设置组
+        # 当前值日值周生设置组
         duty_group = QGroupBox("当前值日值周生")
         duty_layout = QVBoxLayout()
         
@@ -88,7 +98,7 @@ class SettingsDialog(QDialog):
         duty_group.setLayout(duty_layout)
         main_layout.addWidget(duty_group)
         
-        # 3. 窗口设置组
+        # 窗口设置组
         window_group = QGroupBox("窗口设置")
         window_layout = QVBoxLayout()
         
@@ -145,7 +155,7 @@ class SettingsDialog(QDialog):
         self.always_on_top_check.toggled.connect(self.apply_window_changes)
 
 
-        # 4. 跳过日期设置
+        # 跳过日期设置
         skip_group = QGroupBox("跳过日期设置")
         skip_layout = QGridLayout()
         
@@ -161,13 +171,28 @@ class SettingsDialog(QDialog):
         skip_group.setLayout(skip_layout)
         main_layout.addWidget(skip_group)
         
-        # 5. 开机自启动设置
+        # 开机自启动设置
         self.autostart_check = QCheckBox("开机自动启动")
         self.autostart_check.setChecked(self.main_window.settings["autostart"])
         main_layout.addWidget(self.autostart_check)
         
-
-        # 6. 保存按钮
+        # 检查更新按钮
+        update_group = QGroupBox("检查更新")
+        update_layout = QHBoxLayout()
+        self.checkUpdateButton = QPushButton("检查更新")
+        self.checkUpdateButton.clicked.connect(self.check_update)
+        update_layout.addWidget(self.checkUpdateButton)
+        self.updateSourceComboBox = QComboBox()
+        self.updateSourceComboBox.addItem("GitHub")
+        #self.updateSourceComboBox.addItem("Gitee")
+        self.updateSourceComboBox.setCurrentIndex(0)
+        #self.updateSourceComboBox.currentIndexChanged.connect(self.update_update_source)
+        update_layout.addWidget(self.updateSourceComboBox)
+        update_group.setLayout(update_layout)
+        main_layout.addWidget(update_group)
+        
+        
+        # 保存按钮
         save_button = QPushButton("保存设置")
         save_button.clicked.connect(self.save_settings)
         main_layout.addWidget(save_button)
@@ -286,5 +311,4 @@ class SettingsDialog(QDialog):
     def closeEvent(self, event):
         """重写关闭事件"""
         self.hide()  # 隐藏窗口
-        event.ignore()  # 忽略关闭事件，防止窗口被销毁
         event.ignore()  # 忽略关闭事件，防止窗口被销毁

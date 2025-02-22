@@ -2,15 +2,16 @@ import sys
 import os
 #import winreg  # Windows注册表操作
 from PyQt6.QtWidgets import (QApplication, QMainWindow, QWidget, QSystemTrayIcon, 
-                            QMenu,  QVBoxLayout)
+                            QMenu,  QVBoxLayout, QMessageBox)
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QFont, QIcon
 #from datetime import date
 import json
 
 from SettingsDialog import *
+from UpdateForm import *
 
-VERSION = "V1.0.17"
+VERSION = "V1.1.0"
 
 
 class MainWindow(QMainWindow):
@@ -406,6 +407,17 @@ class MainWindow(QMainWindow):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
+    try:
+        with open('VERSION', 'r', encoding='utf-8') as f:
+            VERSION = f.read()
+    except Exception as e:
+        msg_box = QMessageBox()
+        msg_box.setIcon(QMessageBox.Icon.Critical)
+        msg_box.setWindowTitle('错误')
+        msg_box.setText('未找到VERSION')
+        msg_box.setStandardButtons(QMessageBox.StandardButton.Ok)
+        msg_box.setDefaultButton(QMessageBox.StandardButton.Ok)
+        VERSION = "V1.1.0"
     window = MainWindow()
     window.show()
     sys.exit(app.exec())
