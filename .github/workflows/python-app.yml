@@ -63,7 +63,8 @@ jobs:
         "new_version=$newVersion" >> $env:GITHUB_ENV
         echo "::set-output name=new_version::$newVersion"
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+
 
 
     - name: Create release
