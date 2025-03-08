@@ -9,7 +9,7 @@ import json
 
 from SettingsDialog import *
 
-VERSION = "V1.1.23"
+VERSION = "V1.1.26"
 
 
 class MainWindow(QMainWindow):

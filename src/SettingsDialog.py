@@ -75,10 +75,10 @@ class SettingsDialog(QDialog):
         # 右侧：班干部名单
         right_layout = QVBoxLayout()
         self.cadres_edit = QTextEdit()
-        self.cadres_edit.setPlaceholderText("请输入班干部名单，每行一个名字")
+        self.cadres_edit.setPlaceholderText("请输入值周生名单，每行一个名字")
         self.cadres_edit.setText("\n".join(self.main_window.settings.get("cadres", [])))
         self.cadres_edit.textChanged.connect(self.on_students_changed)
-        right_layout.addWidget(QLabel("班干部名单："))
+        right_layout.addWidget(QLabel("值周生名单："))
         right_layout.addWidget(self.cadres_edit)
         
         # 将左右布局添加到主布局
