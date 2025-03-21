@@ -9,7 +9,7 @@ import json
 from SettingsDialog import *
 from UpdateForm import *
 
-VERSION = "V1.1.28"
+VERSION = "V1.1.29"
 
 class MainWindow(QMainWindow):
     def __init__(self):
