@@ -1,16 +1,15 @@
 import sys
 import os
 #import winreg  # Windows注册表操作
-from PyQt6.QtWidgets import (QApplication, QMainWindow, QWidget, QSystemTrayIcon, 
-                            QMenu,  QVBoxLayout)
+from PyQt6.QtWidgets import (QApplication, QMainWindow, QWidget, QSystemTrayIcon, QMenu,  QVBoxLayout, QMessageBox, QSizePolicy)
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QFont, QIcon
-#from datetime import date
 import json
 
 from SettingsDialog import *
+from UpdateForm import *
 
-VERSION = "V1.0.16"
+VERSION = "V1.1.29"
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -21,7 +20,11 @@ class MainWindow(QMainWindow):
         # 加载设置
         self.base_path = os.path.dirname(os.path.abspath(__file__))
         # 这个base_path在真实情况下，指向的是主程序同目录下的_internal文件夹
+<<<<<<< HEAD
         # 所以，Tray.png应该放在_internal/img文件夹下！！！
+=======
+        # 所以，Tray.png应该放在_internal文件夹下，而非主程序目录下！！！
+>>>>>>> 9ee0fe200e59082424e780ff242892ea0aea6bf6
         self.load_settings()
         
         # 创建主窗口组件
@@ -47,7 +50,7 @@ class MainWindow(QMainWindow):
         
         # 更新值日值周生显示
         self.update_duty_students()
-        
+
         # 更新窗口标志
         self.update_window_flags()
 
@@ -59,10 +62,22 @@ class MainWindow(QMainWindow):
         
         # 布局
         layout = QVBoxLayout(self.central_widget)
+        layout.setSpacing(5)  # 设置标签间距为7像素
         
-        # 创建标签
+        # 创建标签并设置大小策略
         self.weekly_label = QLabel()
         self.daily_label = QLabel()
+        self.group_label = QLabel()
+        
+        # 设置标签大小策略，使其可以垂直扩展
+        for label in [self.weekly_label, self.daily_label, self.group_label]:
+            label.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+            label.setMinimumHeight(50)  # 设置最小高度
+            
+        # 设置布局拉伸因子
+        layout.addWidget(self.weekly_label, stretch=1)
+        layout.addWidget(self.daily_label, stretch=1)
+        layout.addWidget(self.group_label, stretch=1)
         
         # 设置字体
         self.update_font()
@@ -70,9 +85,16 @@ class MainWindow(QMainWindow):
         # 设置对齐方式
         self.weekly_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.daily_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.group_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        
+        # 设置样式
+        self.weekly_label.setStyleSheet("color: black;")
+        self.daily_label.setStyleSheet("color: black;")
+        self.group_label.setStyleSheet("color: black;")
         
         layout.addWidget(self.weekly_label)
         layout.addWidget(self.daily_label)
+        layout.addWidget(self.group_label)
 
     def setup_tray(self):
         """初始化系统托盘"""
@@ -93,7 +115,7 @@ class MainWindow(QMainWindow):
         self.tray_drag_action.triggered.connect(self.toggle_draggable)
         
         # 添加鼠标穿透选项
-        self.tray_menu.addSeparator()
+        # self.tray_menu.addSeparator()
         self.tray_click_through_action = self.tray_menu.addAction("鼠标穿透")
         self.tray_click_through_action.setCheckable(True)
         self.tray_click_through_action.setChecked(self.settings.get("click_through", False))
@@ -106,7 +128,7 @@ class MainWindow(QMainWindow):
         self.tray_always_on_top_action.setChecked(self.settings.get("always_on_top", True))
         self.tray_always_on_top_action.triggered.connect(self.toggle_always_on_top)
         
-        # 添加分隔线和其他选项
+        # 添加其他选项
         self.tray_menu.addSeparator()
         settings_action = self.tray_menu.addAction("设置")
         settings_action.triggered.connect(self.show_settings)
@@ -126,7 +148,7 @@ class MainWindow(QMainWindow):
         self.drag_action.triggered.connect(self.toggle_draggable)
         
         # 添加鼠标穿透选项
-        self.context_menu.addSeparator()
+        # self.context_menu.addSeparator()
         self.click_through_action = self.context_menu.addAction("鼠标穿透")
         self.click_through_action.setCheckable(True)
         self.click_through_action.setChecked(self.settings.get("click_through", False))
@@ -178,11 +200,13 @@ class MainWindow(QMainWindow):
         self.font = QFont(font_family, font_size)
         self.weekly_label.setFont(self.font)
         self.daily_label.setFont(self.font)
+        self.group_label.setFont(self.font)
 
     def load_settings(self):
         # 定义默认设置
         default_settings = {
             "students": [],
+            "cadres": [],  # 班干部名单
             "opacity": 0.60,
             "autostart": False,
             "current_weekly": "",
@@ -198,6 +222,9 @@ class MainWindow(QMainWindow):
                 "x": -1,
                 "y": -1
             },
+            "skip_days": [],  # 添加跳过日期设置
+            "total_groups": 6,  # 值周小组总数
+            "current_group": 1,  # 当前值周小组
         }
         
         try:
@@ -219,26 +246,42 @@ class MainWindow(QMainWindow):
         if not self.settings["students"]:
             self.weekly_label.setText("值周：未设置")
             self.daily_label.setText("值日：未设置")
+            self.group_label.setText("小组：第1组")
             return
             
         today = datetime.date.today()
         
-        # 更新值周生（每周一更新）
-        if today.weekday() == 0 or not self.settings["current_weekly"]:
-            weekly_index = self.settings["students"].index(self.settings["current_weekly"]) if self.settings["current_weekly"] else -1
-            weekly_index = (weekly_index + 1) % len(self.settings["students"])
-            self.settings["current_weekly"] = self.settings["students"][weekly_index]
-            
-        # 更新值日生（每天更新）
-        if str(today) != self.settings["last_update"]:
-            daily_index = self.settings["students"].index(self.settings["current_daily"]) if self.settings["current_daily"] else -1
-            daily_index = (daily_index + 1) % len(self.settings["students"])
-            self.settings["current_daily"] = self.settings["students"][daily_index]
-            self.settings["last_update"] = str(today)
+        # 将周几转换为中文表示
+        weekdays = ["周一", "周二", "周三", "周四", "周五", "周六", "周日"]
+        current_day = weekdays[today.weekday()]
+        
+        # 如果当前日期在跳过列表中，则不更新
+        if not current_day in self.settings.get("skip_days", []):  
+            # 更新值周生（每周一更新，仅从班干部中循环）
+            if today.weekday() == 0 or not self.settings["current_weekly"]:
+                if self.settings["cadres"]:  # 如果有班干部名单
+                    weekly_index = self.settings["cadres"].index(self.settings["current_weekly"]) if self.settings["current_weekly"] in self.settings["cadres"] else -1
+                    weekly_index = (weekly_index + 1) % len(self.settings["cadres"])
+                    self.settings["current_weekly"] = self.settings["cadres"][weekly_index]
+                else:  # 如果没有班干部名单，从全体学生中循环
+                    weekly_index = self.settings["students"].index(self.settings["current_weekly"]) if self.settings["current_weekly"] else -1
+                    weekly_index = (weekly_index + 1) % len(self.settings["students"])
+                    self.settings["current_weekly"] = self.settings["students"][weekly_index]
+                
+                # 更新值周小组（每周一更新）
+                self.settings["current_group"] = (self.settings["current_group"] % self.settings["total_groups"]) + 1
+                
+            # 更新值日生（每天更新，从全体学生中循环）
+            if str(today) != self.settings["last_update"]:
+                daily_index = self.settings["students"].index(self.settings["current_daily"]) if self.settings["current_daily"] else -1
+                daily_index = (daily_index + 1) % len(self.settings["students"])
+                self.settings["current_daily"] = self.settings["students"][daily_index]
+                self.settings["last_update"] = str(today)
         
         # 更新显示
         self.weekly_label.setText(f"值周：{self.settings['current_weekly']}")
         self.daily_label.setText(f"值日：{self.settings['current_daily']}")
+        self.group_label.setText(f"小组：第{self.settings['current_group']}组")
         
         # 确保使用正确的字体
         self.update_font()
@@ -257,6 +300,11 @@ class MainWindow(QMainWindow):
         height = int(screen.height() * self.settings["window_size_ratio"])
         self.resize(width, height)
         
+        # 更新标签高度
+        label_height = int(height / 3) - 20  # 减去间距
+        for label in [self.weekly_label, self.daily_label, self.group_label]:
+            label.setMinimumHeight(label_height)
+        
         # 只在没有保存位置时设置默认位置
         if "window_pos" not in self.settings:
             self.move(screen.width() - width, 0)
@@ -265,13 +313,17 @@ class MainWindow(QMainWindow):
         """更新窗口标志"""
         flags = Qt.WindowType.FramelessWindowHint | Qt.WindowType.Tool
         
-        # 添加置顶标志
+        # 添加置顶/置底标志
         if self.settings.get("always_on_top", True):
             flags |= Qt.WindowType.WindowStaysOnTopHint
+        else:
+            flags |= Qt.WindowType.WindowStaysOnBottomHint
         
         # 添加穿透标志
         if self.settings.get("click_through", False):
             flags |= Qt.WindowType.WindowTransparentForInput
+        else:
+            flags &= ~Qt.WindowType.WindowTransparentForInput
         
         self.setWindowFlags(flags)
         self.show()
@@ -398,6 +450,17 @@ class MainWindow(QMainWindow):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
+    # try:
+    #     with open('VERSION', 'r', encoding='utf-8') as f:
+    #         VERSION = f.read()
+    # except Exception as e:
+    #     msg_box = QMessageBox()
+    #     msg_box.setIcon(QMessageBox.Icon.Critical)
+    #     msg_box.setWindowTitle('错误')
+    #     msg_box.setText('未找到VERSION')
+    #     msg_box.setStandardButtons(QMessageBox.StandardButton.Ok)
+    #     msg_box.setDefaultButton(QMessageBox.StandardButton.Ok)
+    #     VERSION = "V1.1.0"
     window = MainWindow()
     window.show()
     sys.exit(app.exec())

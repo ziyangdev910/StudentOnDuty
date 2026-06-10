@@ -5,7 +5,7 @@ a = Analysis(
     ['src\\StudentOnDuty.py'],
     pathex=[],
     binaries=[],
-    datas=[('src/img/Tray.png', './img/'), ('src/img/Tray.ico', './img/')],
+    datas=[('src/img/Tray.png', './img/'), ('src/img/Tray.ico', './img/'), ('src/VERSION', './')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
